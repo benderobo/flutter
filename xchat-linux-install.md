@@ -95,12 +95,12 @@ flutter build linux --release
 
 **Relay (для сообщений):**
 ```
-wss://bendernostur.duckdns.org:8443
+wss://name.domen.com:port
 ```
 
 **File server / Media (для фото):**
 ```
-https://bendernostur.duckdns.org:8444
+https://name.domen.com:port
 ```
 
 Регистрация не нужна — сервер принимает загрузки от всех (NIP-96, allowPublicUploads).
