@@ -141,7 +141,28 @@ EOF
 
 ---
 
-## Шаг 6 — Сборка xchat
+## Шаг 6 — Патч Dart (баг совместимости с Flutter 3.41+)
+
+Новые версии Flutter добавили два обязательных метода в `CupertinoLocalizations`, которых нет в xchat.
+Открываем файл:
+
+```
+packages/base_framework/ox_localizable/lib/src/custom_Localizations_delegate.dart
+```
+
+Добавляем перед последней `}` класса `_DefaultCupertinoLocalizations`:
+
+```dart
+  @override
+  String get backButtonLabel => _en.backButtonLabel;
+
+  @override
+  String get cancelButtonLabel => _en.cancelButtonLabel;
+```
+
+---
+
+## Шаг 7 — Сборка xchat
 
 ```bash
 cd ~/xchat-app-main
@@ -155,9 +176,13 @@ flutter build linux --release 2>&1 | tee ~/Desktop/xchat-build.log
 
 Сборка займёт 30–60 минут (много Dart-кода, HDD медленный).
 
+> **Важно:** если сборка упала с ошибкой `cmake install ... Permission denied` —
+> выполни `flutter clean` и повтори `flutter build linux --release`.
+> Это сбрасывает cmake cache с неправильным путём `/usr/local/`.
+
 Готовый бинарник:
 ```
-~/xchat-app-main/build/linux/x64/release/bundle/ox_chat
+~/xchat-app-main/build/linux/x64/release/bundle/oxchat_app_main
 ```
 
 ---
@@ -165,7 +190,22 @@ flutter build linux --release 2>&1 | tee ~/Desktop/xchat-build.log
 ## Запуск
 
 ```bash
-~/xchat-app-main/build/linux/x64/release/bundle/ox_chat
+~/xchat-app-main/build/linux/x64/release/bundle/oxchat_app_main
+```
+
+Или добавить в меню KDE:
+
+```bash
+mkdir -p ~/.local/share/applications
+cat > ~/.local/share/applications/xchat.desktop << 'EOF'
+[Desktop Entry]
+Name=0xChat
+Exec=/home/bender/xchat-app-main/build/linux/x64/release/bundle/oxchat_app_main
+Icon=internet-chat
+Type=Application
+Categories=Network;InstantMessaging;
+StartupNotify=true
+EOF
 ```
 
 ---
@@ -174,15 +214,15 @@ flutter build linux --release 2>&1 | tee ~/Desktop/xchat-build.log
 
 **Relay (для сообщений):**
 ```
-wss://bendernostur.duckdns.org:8443
+wss://<твой-домен>:<порт>
 ```
 
 **File server / Media (для фото):**
 ```
-https://bendernostur.duckdns.org:8444
+https://<твой-домен>:<порт>
 ```
 
-Регистрация не нужна — сервер принимает загрузки от всех (NIP-96, allowPublicUploads).
+Если сервер настроен с `allowPublicUploads: true` — регистрация не нужна, любой может загружать файлы по NIP-96.
 
 ---
 
